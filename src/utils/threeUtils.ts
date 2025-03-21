@@ -118,9 +118,9 @@ export const createHeadModel = (): THREE.Group => {
 export const createShaverModel = (): THREE.Group => {
   const shaverGroup = new THREE.Group();
 
-  // Shaver body
+  // Shaver body - Fix: Changed to MeshStandardMaterial
   const bodyGeometry = new THREE.CylinderGeometry(0.15, 0.2, 0.7, 32);
-  const bodyMaterial = new THREE.MeshPhongMaterial({ 
+  const bodyMaterial = new THREE.MeshStandardMaterial({ 
     color: 0x303030,
     metalness: 0.8,
     roughness: 0.2
@@ -129,9 +129,9 @@ export const createShaverModel = (): THREE.Group => {
   body.rotation.x = Math.PI / 2;
   shaverGroup.add(body);
 
-  // Shaver head
+  // Shaver head - Fix: Changed to MeshStandardMaterial
   const headGeometry = new THREE.CylinderGeometry(0.22, 0.22, 0.15, 32);
-  const headMaterial = new THREE.MeshPhongMaterial({ 
+  const headMaterial = new THREE.MeshStandardMaterial({ 
     color: 0x505050,
     metalness: 0.9,
     roughness: 0.1
@@ -141,9 +141,9 @@ export const createShaverModel = (): THREE.Group => {
   head.position.y = 0.4;
   shaverGroup.add(head);
 
-  // Shaver blades
+  // Shaver blades - Fix: Changed to MeshStandardMaterial
   const bladeGeometry = new THREE.BoxGeometry(0.35, 0.02, 0.15);
-  const bladeMaterial = new THREE.MeshPhongMaterial({ 
+  const bladeMaterial = new THREE.MeshStandardMaterial({ 
     color: 0x909090,
     metalness: 1,
     roughness: 0

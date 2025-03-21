@@ -1,4 +1,3 @@
-
 import {
   FaceMesh,
   FACEMESH_TESSELATION,
@@ -10,7 +9,7 @@ import {
   FACEMESH_LIPS,
 } from "@mediapipe/face_mesh";
 import { Camera } from "@mediapipe/camera_utils";
-import { DrawingUtils } from "@mediapipe/drawing_utils";
+import * as drawingUtils from "@mediapipe/drawing_utils";
 import { Vector3, Euler } from "three";
 
 export interface FaceLandmarks {
@@ -73,14 +72,14 @@ export const startCamera = (
   return camera;
 };
 
-export const setupDrawingUtils = (canvas: HTMLCanvasElement): DrawingUtils => {
+export const setupDrawingUtils = (canvas: HTMLCanvasElement): any => {
   const canvasCtx = canvas.getContext("2d");
-  return new DrawingUtils(canvasCtx);
+  return new drawingUtils.CanvasRenderer(canvasCtx);
 };
 
 export const drawFaceMesh = (
   results: any,
-  drawingUtils: DrawingUtils,
+  drawingUtils: any,
   canvasElement: HTMLCanvasElement
 ): void => {
   if (!results.multiFaceLandmarks || !canvasElement) return;
