@@ -20,6 +20,7 @@ const CameraView: React.FC<CameraViewProps> = ({
   
   const faceMeshRef = useRef<FaceMesh | null>(null);
   const cameraRef = useRef<Camera | null>(null);
+  const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
 
   useEffect(() => {
     let faceMesh: FaceMesh | null = null;
@@ -33,11 +34,12 @@ const CameraView: React.FC<CameraViewProps> = ({
         faceMesh = initFaceMesh();
         faceMeshRef.current = faceMesh;
         
-        // Setup callback when FaceMesh detects results
-        const drawingUtils = setupDrawingUtils(canvasRef.current);
+        // Setup canvas context for drawing
+        canvasCtxRef.current = setupDrawingUtils(canvasRef.current);
         
+        // Setup callback when FaceMesh detects results
         faceMesh.onResults((results) => {
-          if (!canvasRef.current || !results) return;
+          if (!canvasRef.current || !results || !canvasCtxRef.current) return;
           
           // Resize canvas to match video dimensions
           const videoElement = videoRef.current;
@@ -48,7 +50,7 @@ const CameraView: React.FC<CameraViewProps> = ({
           
           // Draw the face mesh wireframe if enabled
           if (showWireframe) {
-            drawFaceMesh(results, drawingUtils, canvasRef.current);
+            drawFaceMesh(results, canvasCtxRef.current, canvasRef.current);
           } else {
             // Clear canvas if wireframe is disabled
             const canvasCtx = canvasRef.current.getContext('2d');

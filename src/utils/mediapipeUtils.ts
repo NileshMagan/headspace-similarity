@@ -74,17 +74,16 @@ export const startCamera = (
 
 export const setupDrawingUtils = (canvas: HTMLCanvasElement): any => {
   const canvasCtx = canvas.getContext("2d");
-  return new drawingUtils.CanvasRenderer(canvasCtx);
+  return canvasCtx;
 };
 
 export const drawFaceMesh = (
   results: any,
-  drawingUtils: any,
+  canvasCtx: CanvasRenderingContext2D,
   canvasElement: HTMLCanvasElement
 ): void => {
   if (!results.multiFaceLandmarks || !canvasElement) return;
 
-  const canvasCtx = canvasElement.getContext("2d");
   if (!canvasCtx) return;
 
   canvasCtx.save();
@@ -93,36 +92,43 @@ export const drawFaceMesh = (
   // Draw the face mesh
   for (const landmarks of results.multiFaceLandmarks) {
     drawingUtils.drawConnectors(
+      canvasCtx,
       landmarks,
       FACEMESH_TESSELATION,
       { color: "#C0C0C070", lineWidth: 0.5 }
     );
     drawingUtils.drawConnectors(
+      canvasCtx,
       landmarks,
       FACEMESH_RIGHT_EYE,
       { color: "#30FF30", lineWidth: 1 }
     );
     drawingUtils.drawConnectors(
+      canvasCtx,
       landmarks,
       FACEMESH_LEFT_EYE,
       { color: "#30FF30", lineWidth: 1 }
     );
     drawingUtils.drawConnectors(
+      canvasCtx,
       landmarks,
       FACEMESH_RIGHT_EYEBROW,
       { color: "#30FF30", lineWidth: 1 }
     );
     drawingUtils.drawConnectors(
+      canvasCtx,
       landmarks,
       FACEMESH_LEFT_EYEBROW,
       { color: "#30FF30", lineWidth: 1 }
     );
     drawingUtils.drawConnectors(
+      canvasCtx,
       landmarks,
       FACEMESH_FACE_OVAL,
       { color: "#E0E0E0", lineWidth: 1.5 }
     );
     drawingUtils.drawConnectors(
+      canvasCtx,
       landmarks,
       FACEMESH_LIPS,
       { color: "#E0E0E0", lineWidth: 1 }
