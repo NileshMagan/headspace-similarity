@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FaceLandmarks } from "../utils/mediapipeUtils";
 import CameraView from "../components/CameraView";
 import ThreeDView from "../components/ThreeDView";
@@ -12,6 +11,7 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [faceLandmarks, setFaceLandmarks] = useState<FaceLandmarks | null>(null);
   const [wireframeVisible, setWireframeVisible] = useState(true);
+  const [debugMode, setDebugMode] = useState(false);
   const [shaverPosition, setShaverPosition] = useState({ x: 1.5, y: 0, z: 0 });
   const [shaverRotation, setShaverRotation] = useState({ x: 0, y: 0, z: 0 });
 
@@ -24,9 +24,10 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleFaceLandmarksUpdate = (landmarks: FaceLandmarks | null) => {
+  const handleFaceLandmarksUpdate = useCallback((landmarks: FaceLandmarks | null) => {
+    // console.log('Parent component received landmarks:', landmarks);
     setFaceLandmarks(landmarks);
-  };
+  }, []);
 
   const handleShaverPositionChange = (position: { x: number; y: number; z: number }) => {
     setShaverPosition(position);
@@ -57,6 +58,7 @@ const Index = () => {
             <CameraView 
               onFaceLandmarksUpdate={handleFaceLandmarksUpdate} 
               showWireframe={wireframeVisible}
+              debugMode={debugMode}
             />
           </div>
           
@@ -75,6 +77,8 @@ const Index = () => {
             onShaverRotationChange={handleShaverRotationChange}
             wireframeVisible={wireframeVisible}
             onWireframeToggle={setWireframeVisible}
+            debugMode={debugMode}
+            onDebugModeToggle={setDebugMode}
           />
         </div>
       </div>

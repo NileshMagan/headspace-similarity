@@ -1,8 +1,7 @@
-
 import React, { useRef, useEffect, useState } from "react";
-import * as THREE from "three";
 import { FaceLandmarks } from "../utils/mediapipeUtils";
-import { initScene, animate } from "../utils/threeUtils";
+import { initializeThreeScene, updateThreeScene, cleanupThreeScene } from "../utils/threeUtils";
+import { SceneManager } from "../utils/three/sceneManager";
 
 interface ThreeDViewProps {
   faceLandmarks: FaceLandmarks | null;
@@ -17,84 +16,39 @@ const ThreeDView: React.FC<ThreeDViewProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [sceneLoaded, setSceneLoaded] = useState(false);
+  const sceneManagerRef = useRef<SceneManager | null>(null);
   
-  // References to Three.js objects
-  const sceneRef = useRef<THREE.Scene | null>(null);
-  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const headModelRef = useRef<THREE.Group | null>(null);
-  const shaverModelRef = useRef<THREE.Group | null>(null);
-  
-  // Set up Three.js scene
+  // Initialize Three.js scene
   useEffect(() => {
     if (!containerRef.current) return;
     
     // Initialize the 3D scene
-    const { scene, camera, renderer, headModel, shaverModel } = initScene(containerRef.current);
-    
-    // Store references
-    sceneRef.current = scene;
-    cameraRef.current = camera;
-    rendererRef.current = renderer;
-    headModelRef.current = headModel;
-    shaverModelRef.current = shaverModel;
-    
+    sceneManagerRef.current = initializeThreeScene(containerRef.current);
     setSceneLoaded(true);
-    
-    // Animation loop
-    const animationLoop = () => {
-      if (
-        !sceneRef.current ||
-        !cameraRef.current ||
-        !rendererRef.current ||
-        !headModelRef.current ||
-        !shaverModelRef.current
-      ) {
-        return;
-      }
-      
-      animate(
-        sceneRef.current,
-        cameraRef.current,
-        rendererRef.current,
-        headModelRef.current,
-        shaverModelRef.current,
-        faceLandmarks,
-        shaverPosition,
-        shaverRotation
-      );
-      
-      requestAnimationFrame(animationLoop);
-    };
-    
-    // Start animation
-    animationLoop();
     
     // Cleanup
     return () => {
-      if (rendererRef.current) {
-        rendererRef.current.dispose();
-        if (containerRef.current?.contains(rendererRef.current.domElement)) {
-          containerRef.current.removeChild(rendererRef.current.domElement);
-        }
+      if (sceneManagerRef.current) {
+        cleanupThreeScene(sceneManagerRef.current);
       }
-      
-      // Dispose of geometries and materials
-      scene.traverse((object) => {
-        if (object instanceof THREE.Mesh) {
-          if (object.geometry) object.geometry.dispose();
-          
-          if (object.material) {
-            if (Array.isArray(object.material)) {
-              object.material.forEach(material => material.dispose());
-            } else {
-              object.material.dispose();
-            }
-          }
-        }
-      });
     };
   }, []);
+
+  // Update models when face landmarks change
+  useEffect(() => {
+    if (sceneManagerRef.current && faceLandmarks) {
+      updateThreeScene(sceneManagerRef.current, faceLandmarks);
+    }
+  }, [faceLandmarks]);
+
+  // Update shaver position and rotation
+  useEffect(() => {
+    if (sceneManagerRef.current) {
+      sceneManagerRef.current.setShaverPosition(shaverPosition);
+      sceneManagerRef.current.setShaverRotation(shaverRotation);
+      // updateThreeScene(sceneManagerRef.current, faceLandmarks); // TODO: Uncomment for head model movement
+    }
+  }, [shaverPosition, shaverRotation, faceLandmarks]);
   
   return (
     <div 

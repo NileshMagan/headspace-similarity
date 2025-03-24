@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
@@ -10,6 +9,8 @@ interface ControlPanelProps {
   onShaverRotationChange: (rotation: { x: number; y: number; z: number }) => void;
   wireframeVisible: boolean;
   onWireframeToggle: (visible: boolean) => void;
+  debugMode: boolean;
+  onDebugModeToggle: (enabled: boolean) => void;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({
@@ -17,6 +18,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   onShaverRotationChange,
   wireframeVisible,
   onWireframeToggle,
+  debugMode,
+  onDebugModeToggle,
 }) => {
   const [shaverPosition, setShaverPosition] = useState({ x: 1.5, y: 0, z: 0 });
   const [shaverRotation, setShaverRotation] = useState({ x: 0, y: 0, z: 0 });
@@ -37,15 +40,27 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     <div className="control-panel w-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-medium">Controls</h3>
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="wireframe-toggle"
-            checked={wireframeVisible}
-            onCheckedChange={onWireframeToggle}
-          />
-          <Label htmlFor="wireframe-toggle" className="text-sm">
-            Show Wireframe
-          </Label>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="wireframe-toggle"
+              checked={wireframeVisible}
+              onCheckedChange={onWireframeToggle}
+            />
+            <Label htmlFor="wireframe-toggle" className="text-sm">
+              Show Wireframe
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="debug-toggle"
+              checked={debugMode}
+              onCheckedChange={onDebugModeToggle}
+            />
+            <Label htmlFor="debug-toggle" className="text-sm">
+              Debug Mode
+            </Label>
+          </div>
         </div>
       </div>
 
